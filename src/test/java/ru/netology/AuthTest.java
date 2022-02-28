@@ -30,7 +30,7 @@ public class AuthTest {
 
     @Test
     void shouldTestWithStatusActive() {
-        UserData userData = DataGenerator.statusActive();
+        UserData userData = DataGenerator.statusUser("active");
         login.setValue(userData.getLogin());
         password.setValue(userData.getPassword());
         actionButton.click();
@@ -39,7 +39,7 @@ public class AuthTest {
 
     @Test
     void shouldTestWithStatusBlocked() {
-        UserData userData = DataGenerator.statusBlocked();
+        UserData userData = DataGenerator.statusUser("blocked");
         login.setValue(userData.getLogin());
         password.setValue(userData.getPassword());
         actionButton.click();
@@ -48,7 +48,7 @@ public class AuthTest {
 
     @Test
     void shouldTestWithInvalidLogin() {
-        UserData userData = DataGenerator.invalidLogin();
+        UserData userData = DataGenerator.invalidLoginOrPassword("Алена", null);
         login.setValue(userData.getLogin());
         password.setValue(userData.getPassword());
         actionButton.click();
@@ -57,7 +57,7 @@ public class AuthTest {
 
     @Test
     void shouldTestWithInvalidPassword() {
-        UserData userData = DataGenerator.invalidPassword();
+        UserData userData = DataGenerator.invalidLoginOrPassword(null, "пароль");
         login.setValue(userData.getLogin());
         password.setValue(userData.getPassword());
         actionButton.click();

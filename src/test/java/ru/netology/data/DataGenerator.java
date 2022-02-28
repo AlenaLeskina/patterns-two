@@ -5,16 +5,14 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.experimental.UtilityClass;
 
 import java.util.Locale;
 import static io.restassured.RestAssured.given;
 
-@Data
-@AllArgsConstructor
+@UtilityClass
 public class DataGenerator {
-    private static RequestSpecification requestSpec = new RequestSpecBuilder()
+    private final RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
             .setPort(9999)
             .setAccept(ContentType.JSON)
@@ -23,7 +21,7 @@ public class DataGenerator {
             .build();
 
 
-    private static void setUpAll(UserData userData) {
+    private void userCreationRequest(UserData userData) {
         // сам запрос
         given() // "дано"
                 .spec(requestSpec) // указываем, какую спецификацию используем
@@ -34,35 +32,25 @@ public class DataGenerator {
                 .statusCode(200); // код 200 OK
     }
 
-    public static UserData statusActive() {
+    public UserData statusUser(String status) {
         Faker faker = new Faker(new Locale("en"));
         String login = faker.name().firstName();
         String password = faker.internet().password();
-        setUpAll(new UserData(login, password, "active"));
-        return new UserData(login, password, "active");
+        userCreationRequest(new UserData(login, password, status));
+        return new UserData(login, password, status);
     }
 
-    public static UserData statusBlocked() {
+    public UserData invalidLoginOrPassword(String lg, String pwd) {
         Faker faker = new Faker(new Locale("en"));
-        String login = faker.name().firstName();
-        String password = faker.internet().password();
-        setUpAll(new UserData(login, password, "blocked"));
-        return new UserData(login, password, "blocked");
-    }
-
-    public static UserData invalidLogin() {
-        Faker faker = new Faker(new Locale("en"));
-        String password = faker.internet().password();
-        String status = "active";
-        setUpAll(new UserData("Алена", password, status));
-        return new UserData("invalidLogin", password, status);
-    }
-
-    public static UserData invalidPassword() {
-        Faker faker = new Faker(new Locale("en"));
-        String login = faker.name().firstName();
-        String status = "active";
-        setUpAll(new UserData(login, "пароль", status));
-        return new UserData(login, "invalidPassword", status);
+        if(pwd == null){
+            String password = faker.internet().password();
+            userCreationRequest(new UserData(lg, password, "active"));
+            return new UserData("invalidLogin", password, "active");
+        }
+        else{
+            String login = faker.name().firstName();
+            userCreationRequest(new UserData(login, pwd, "active"));
+            return new UserData(login, "invalidPassword", "active");
+        }
     }
 }
